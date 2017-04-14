@@ -14,7 +14,26 @@ namespace CciTest {
             var fixturePath = @"C:\Users\mscottford\Documents\Visual Studio 2015\Projects\CciTest\Fixture\bin\Debug";
             var pdbFixturePath = Path.Combine(fixturePath, "Fixture.pdb");
             var peFixturePath = Path.Combine(fixturePath, "Fixture.dll");
+            var methodLocations = new Dictionary<string, string>();
 
+            ReadMethodLocations(methodLocations, pdbFixturePath, peFixturePath);
+
+            foreach (var keyPair in methodLocations)
+            {
+                Console.WriteLine("Method Name:");
+                Console.WriteLine(keyPair.Key);
+
+                Console.WriteLine("Source Location:");
+                Console.WriteLine(keyPair.Value);
+
+                Console.WriteLine("---");
+            }
+
+            Console.ReadLine();
+        }
+
+        private static void ReadMethodLocations(Dictionary<string, string> methodLocations, string pdbFixturePath, string peFixturePath)
+        {
             var host = new PeReader.DefaultHost();
 
             var pdbFileStream = File.OpenRead(pdbFixturePath);
@@ -22,26 +41,26 @@ namespace CciTest {
             var peReader = new PeReader(host);
             var pdbReader = new PdbReader(pdbFileStream, host);
 
-            var assembly = peReader.OpenAssembly(BinaryDocument.GetBinaryDocumentForFile(peFixturePath, host));
+            var assembly = peReader.OpenAssembly(
+                BinaryDocument.GetBinaryDocumentForFile(peFixturePath, host)
+            );
 
             foreach (var type in assembly.GetAllTypes())
             {
-                foreach (var method in type.Methods)
+                foreach (var method in type.Members)
                 {
-                    Console.WriteLine("Method Name:");
-                    Console.WriteLine(method);
-
-                    Console.WriteLine("Source Location:");
                     foreach (var sourceLocation in pdbReader.GetPrimarySourceLocationsFor(method.Locations))
                     {
-                        Console.WriteLine($"{sourceLocation.SourceDocument.Name}:{sourceLocation.StartLine}");
+                        if (!methodLocations.ContainsKey(method.ToString()))
+                        {
+                            methodLocations.Add(
+                                method.ToString(),
+                                $"{sourceLocation.SourceDocument.Name}:{sourceLocation.StartLine}"
+                            );
+                        }
                     }
-                    
-                    Console.WriteLine("---");
                 }
             }
-
-            Console.ReadLine();
         }
     }
 }
