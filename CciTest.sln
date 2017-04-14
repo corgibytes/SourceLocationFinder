@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CciTest", "CciTest\CciTest.csproj", "{04146957-18E3-4170-8F24-4F67AA702601}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceLocationFinder", "CciTest\SourceLocationFinder.csproj", "{04146957-18E3-4170-8F24-4F67AA702601}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixture", "Fixture\Fixture.csproj", "{42F52D13-2BC1-4BA7-93A5-3CD9D891AE60}"
 EndProject

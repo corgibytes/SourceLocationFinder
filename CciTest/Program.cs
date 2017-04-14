@@ -11,25 +11,48 @@ namespace CciTest {
     class Program {
         static void Main(string[] args)
         {
-            var fixturePath = @"C:\Users\mscottford\Documents\Visual Studio 2015\Projects\CciTest\Fixture\bin\Debug";
-            var pdbFixturePath = Path.Combine(fixturePath, "Fixture.pdb");
-            var peFixturePath = Path.Combine(fixturePath, "Fixture.dll");
-            var methodLocations = new Dictionary<string, string>();
+            var searchPath = Directory.GetCurrentDirectory();
 
-            ReadMethodLocations(methodLocations, pdbFixturePath, peFixturePath);
-
-            foreach (var keyPair in methodLocations)
+            if (args.Length > 0)
             {
-                Console.WriteLine("Method Name:");
-                Console.WriteLine(keyPair.Key);
+                if (args[0] == "/?" || args[0] == "-h" || args[0] == "--help")
+                {
+                    Console.WriteLine("Usage: SourceLocationFinder.exe [path]");
+                    Console.WriteLine("Walks a directory tree and attempts to find source locations for all methods");
+                    Console.WriteLine("discovered in any .NET Assemblies which are accompanied by debugging info.");
+                    Console.WriteLine("If path is not specified the current directory will be used.");
+                    return;
+                }
 
-                Console.WriteLine("Source Location:");
-                Console.WriteLine(keyPair.Value);
-
-                Console.WriteLine("---");
+                searchPath = args[0];
             }
 
-            Console.ReadLine();
+            var methodLocations = new Dictionary<string, string>();
+
+            foreach (var pdbFile in Directory.EnumerateFiles(searchPath, "*.pdb", SearchOption.AllDirectories))
+            {
+                var dllFile = Path.ChangeExtension(pdbFile, "dll");
+                var exeFile = Path.ChangeExtension(pdbFile, "exe");
+                var peFile = (string) null;
+                if (File.Exists(dllFile))
+                {
+                    peFile = dllFile;
+                } 
+                else if (File.Exists(exeFile))
+                {
+                    peFile = exeFile;
+                }
+
+                if (peFile != null)
+                {
+                    ReadMethodLocations(methodLocations, pdbFile, peFile);
+                }
+            }
+            
+            foreach (var keyPair in methodLocations)
+            {
+                Console.WriteLine($"{keyPair.Value}\t{keyPair.Key}");
+            }
         }
 
         private static void ReadMethodLocations(Dictionary<string, string> methodLocations, string pdbFixturePath, string peFixturePath)
@@ -47,14 +70,16 @@ namespace CciTest {
 
             foreach (var type in assembly.GetAllTypes())
             {
-                foreach (var method in type.Members)
+                foreach (var member in type.Members)
                 {
-                    foreach (var sourceLocation in pdbReader.GetPrimarySourceLocationsFor(method.Locations))
+                    foreach (var sourceLocation in pdbReader.GetPrimarySourceLocationsFor(member.Locations))
                     {
-                        if (!methodLocations.ContainsKey(method.ToString()))
+                        var memberName = $"{member}";
+
+                        if (!methodLocations.ContainsKey(memberName))
                         {
                             methodLocations.Add(
-                                method.ToString(),
+                                memberName,
                                 $"{sourceLocation.SourceDocument.Name}:{sourceLocation.StartLine}"
                             );
                         }
