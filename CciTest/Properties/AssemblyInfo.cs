@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CciTest")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("SourceLocationFinder")]
+[assembly: AssemblyDescription("Walks a directory tree and attempts to find source locations for all methods discovered in any.NET Assemblies which are accompanied by debugging info.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CciTest")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCompany("Corgibytes LLC")]
+[assembly: AssemblyProduct("SourceLocationFinder")]
+[assembly: AssemblyCopyright("Copyright © Corgibytes LLC 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

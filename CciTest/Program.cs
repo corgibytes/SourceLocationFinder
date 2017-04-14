@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Cci;
 
-namespace CciTest {
+namespace SourceLocationFinder {
     class Program {
         static void Main(string[] args)
         {
