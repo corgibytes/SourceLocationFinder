@@ -80,7 +80,7 @@ namespace SourceLocationFinder {
                         {
                             methodLocations.Add(
                                 memberName,
-                                $"{sourceLocation.SourceDocument.Name}:{sourceLocation.StartLine}"
+                                $"{sourceLocation.SourceDocument.Location}:{sourceLocation.StartLine}"
                             );
                         }
                     }
